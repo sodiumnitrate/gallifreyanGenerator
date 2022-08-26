@@ -24,14 +24,12 @@ def split_double(word,splitter):
     return new
 
 def split_splitters(word):
-    splitters = ["PH","WH","GH","CH","SH","QU","NG"]
     for splitter in splitters:
         word = split_double(word,splitter)
 
     return word
 
 def separate_non_splitters(word):
-    splitters = ["PH","WH","GH","CH","SH","QU","NG"]
     new = []
     for group in word:
         if group not in splitters:
@@ -43,7 +41,6 @@ def separate_non_splitters(word):
     return new
 
 def merge_vowels(word):
-    vowels = ['A','E','I','O','U']
     new = []
     for i,group in enumerate(word):
         if i==0:
@@ -51,7 +48,7 @@ def merge_vowels(word):
         if i>0:
             if group in vowels:
                 prev_group = word[i-1]
-                if prev_group[-1] in vowels:
+                if prev_group[-1] in vowels and prev_group not in splitters:
                     new.append(group)
                 else:
                     new[-1] += group
