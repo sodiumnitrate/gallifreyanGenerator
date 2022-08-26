@@ -61,5 +61,6 @@ def merge_vowels(word):
     return new
 
 def get_split_word(word):
+    word = word.upper()
     separated = separate_non_splitters(split_splitters(word))
     return merge_vowels(separated)
