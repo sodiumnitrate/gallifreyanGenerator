@@ -1,7 +1,10 @@
-splitters = ["PH","WH","GH","CH","SH","QU","NG"]
-vowels = ['A','E','I','O','U']
+import pdb
 
-def split(word,splitter):
+splitters = ["PH", "WH", "GH", "CH", "SH", "QU", "NG","TH"]
+vowels = ['A', 'E', 'I', 'O', 'U']
+
+
+def split(word, splitter):
     new = word.split(splitter)
     new_grouping = []
     for group in new:
@@ -12,22 +15,25 @@ def split(word,splitter):
             new_grouping.append(splitter)
     return new_grouping[:-1]
 
-def split_double(word,splitter):
+
+def split_double(word, splitter):
     if isinstance(word, str):
         word = [word]
     new = []
     for group in word:
-        b = split(group,splitter)
+        b = split(group, splitter)
         for el in b:
             new.append(el)
 
     return new
 
+
 def split_splitters(word):
     for splitter in splitters:
-        word = split_double(word,splitter)
+        word = split_double(word, splitter)
 
     return word
+
 
 def separate_non_splitters(word):
     new = []
@@ -40,12 +46,13 @@ def separate_non_splitters(word):
 
     return new
 
+
 def merge_vowels(word):
     new = []
-    for i,group in enumerate(word):
-        if i==0:
+    for i, group in enumerate(word):
+        if i == 0:
             new.append(group)
-        if i>0:
+        if i > 0:
             if group in vowels:
                 prev_group = word[i-1]
                 if prev_group[-1] in vowels and prev_group not in splitters:
@@ -57,7 +64,33 @@ def merge_vowels(word):
 
     return new
 
+
 def get_split_word(word):
     word = word.upper()
     separated = separate_non_splitters(split_splitters(word))
     return merge_vowels(separated)
+
+def get_consonant_vowel_groups(group):
+    if len(group) == 3:
+        consonant = group[:2]
+        vowel = group[2]
+    elif len(group) == 2:
+        if group == "QU":
+            consonant = group
+            vowel = ""
+        elif group == "NG":
+            consonant = group
+            vowel = ""
+        else:
+            consonant = group[0]
+            vowel = group[1]
+            if vowel not in "AEUIO":
+                pdb.set_trace()
+    else:
+        if group in "AEIOU":
+            vowel = group
+            consonant = ""
+        else:
+            vowel = ""
+            consonant = group
+    return vowel, consonant
