@@ -75,10 +75,7 @@ def get_consonant_vowel_groups(group):
         consonant = group[:2]
         vowel = group[2]
     elif len(group) == 2:
-        if group == "QU":
-            consonant = group
-            vowel = ""
-        elif group == "NG":
+        if group in splitters:
             consonant = group
             vowel = ""
         else:
