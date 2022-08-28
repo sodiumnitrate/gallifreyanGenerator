@@ -108,13 +108,15 @@ def word_layout(word, scale=1):
     groups = get_split_word(word)
     num_groups = len(groups)
     theta = 2*np.pi/num_groups
+    decoration_angle = theta/5
 
     # separation between groups
     separation = 2 * scale
     rad_consonant_circle = 15 * scale
     rad_word_circle = (separation + rad_consonant_circle) / np.sin(theta/2) * 2
     
-    rad_vowel_circle = rad_word_circle / 12
+    rad_vowel_circle = rad_consonant_circle / 6
+    rad_decoration_circle = rad_vowel_circle / 2
 
     drawing = draw.Drawing(rad_word_circle*4,rad_word_circle*4, origin='center')
     drawing.append(draw.Circle(0,0,rad_word_circle,fill='none',stroke='black'))
@@ -125,7 +127,6 @@ def word_layout(word, scale=1):
         vowel, consonant = get_consonant_vowel_groups(group)
 
         # draw the consonant
-        # TODO: figure out decorations later
         if consonant != "":
             if consonant_class[consonant] == "on":
                 x,y = rad_word_circle * np.cos(angle), rad_word_circle * np.sin(angle)
@@ -143,6 +144,26 @@ def word_layout(word, scale=1):
                 x,y = rad_word_circle * np.cos(angle), rad_word_circle * np.sin(angle)
                 d = np.sqrt(x**2+y**2)
                 drawing.append(consonant_arc(d,angle,rad_word_circle,rad_consonant_circle))
+
+        # add consonant decoration
+        # TODO: try to do this by taking in to consideration where all the other stuff are
+        if consonant != "":
+            dots = consonant_dots[consonant]
+            lines = consonant_lines[consonant]
+
+            for l in range(1,lines+1):
+                delta = angle + decoration_angle * l
+                length = rad_consonant_circle * 2
+                x2,y2 = x - length * np.cos(delta), y - length * np.sin(delta)
+                x1,y1 = length/2 * np.cos(delta) + x2, length/2 * np.sin(delta) + y2
+                drawing.append(draw.Line(x1,y1,x2,y2,fill='none',stroke='black'))
+
+            for d in range(1,dots+1):
+                delta = angle + decoration_angle * d * 2
+                length = rad_consonant_circle * 2
+                x2,y2 = x - length * np.cos(delta), y - length * np.sin(delta)
+                x1,y1 = length/2 * np.cos(delta) + x2, length/2 * np.sin(delta) + y2
+                drawing.append(draw.Circle(x1,y1,rad_decoration_circle,fill='black',stroke='none'))
 
         # draw the vowel
         # TODO: figure out vowel placement later
@@ -183,8 +204,6 @@ def word_layout(word, scale=1):
 
     return drawing
 
-
 # draw two intersecting arcs
-#d = two_circles([10,0],16,370,15,30)
 d = word_layout(word,scale=2)
 d.saveSvg('example.svg')
