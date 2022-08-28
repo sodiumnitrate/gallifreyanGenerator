@@ -1,5 +1,5 @@
 # gallifreyanGenerator
-A tool to generate Sherman's gallifreyan
+A tool to generate [Sherman's Circular Gallifreyan](https://gallifreyan.info/guide/scg).
 
 Currently supports multiple words, but just prints them next to each other on a line. 
 There are a few bugs regarding where to place decorations and I have not yet made any attempts to arrange objects in a reasonable way.
