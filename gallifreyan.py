@@ -1,10 +1,14 @@
+from click import Argument
 import drawSvg as draw
 import numpy as np
 import pdb
 from word_splitter import *
 import sys
+from argparse import ArgumentParser
 
-word = sys.argv[1]
+parser = ArgumentParser()
+parser.add_argument('-n', '--words_list', nargs='+', default=['lorem','ipsum','dolor'])
+args = parser.parse_args()
 
 consonant_class = {"B":"tangent", "J":"inside", "T":"bubble", "TH":"on",
                    "PH":"inside", "WH":"bubble", "GH":"on",
@@ -50,9 +54,7 @@ def consonant_arc(d,omega,r1,r2,origin=(0,0)):
 
     return draw.Arc(pos[0]+origin[0],pos[1]+origin[1],r2,start_angle,start_angle+angle,stroke='black',fill='none')
 
-
-
-def word_layout(word, origin=(0,0), scale=1):
+def word_layout(word, origin=(0,0), scale=1, drawing=None):
     # get number of groups and divide word circle
     groups = get_split_word(word)
     num_groups = len(groups)
@@ -62,12 +64,17 @@ def word_layout(word, origin=(0,0), scale=1):
     # separation between groups
     separation = 2 * scale
     rad_consonant_circle = 15 * scale
-    rad_word_circle = (separation + rad_consonant_circle) / np.sin(theta/2) * 2
+    if num_groups == 1:
+        rad_word_circle = 30
+    else:
+        rad_word_circle = (separation + rad_consonant_circle) / np.sin(theta/2) * 2
     
     rad_vowel_circle = rad_consonant_circle / 6
     rad_decoration_circle = rad_vowel_circle / 2
 
-    drawing = draw.Drawing(rad_word_circle*4,rad_word_circle*4, origin='center')
+    if drawing is None:
+        #TODO: find a better way to set canvas size
+        drawing = draw.Drawing(5000,5000, origin='center')
     drawing.append(draw.Circle(origin[0],origin[1],rad_word_circle,fill='none',stroke='black'))
 
     angle = 0
@@ -153,6 +160,18 @@ def word_layout(word, origin=(0,0), scale=1):
 
     return drawing
 
-# draw two intersecting arcs
-d = word_layout(word,scale=2,origin=(5,5))
+def draw_sentence(word_list,max_size=300):
+    #TODO: find a way to automate max_size and
+    # arrange words in a smart way
+    
+    num_words = len(word_list)
+    
+    d = draw.Drawing(max_size*num_words,max_size, origin='center')
+    x_pos = max_size*(num_words-1) * -0.5
+    for word in word_list:
+        d = word_layout(word,scale=2,origin=(x_pos,0),drawing=d)
+        x_pos += max_size
+    return d
+
+d = draw_sentence(args.words_list)
 d.saveSvg('example.svg')
