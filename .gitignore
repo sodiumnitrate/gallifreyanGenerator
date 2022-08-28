@@ -1,2 +1,10 @@
 *svg
 *png
+__pychache__/
+.Python
+eggs/
+.eggs/
+*.egg-info
+build/
+dist/
+*/__pycache__/
